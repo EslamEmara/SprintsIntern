@@ -1,0 +1,13 @@
+generate random number
+
+read keypad press()
+if (press is number)
+	add to input array
+	print the array in the lcd
+if (press == '=')
+	check the number validity
+	if(valid)
+		check if (number == random number)
+				print win message and generate new number
+			else
+				let him try again 
