@@ -12,6 +12,9 @@
 #include "BIT_MATH.h"
 #include "RegMap.h"
 #include "TypeDefs.h"
+
+#define END_OF_STRING	'#'
+
 /*frequencies*/
 typedef enum{
 	FREQ_1MHz = 1000000,

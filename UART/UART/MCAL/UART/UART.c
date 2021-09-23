@@ -126,7 +126,7 @@ void UART_ReceiveString(sint8_t *str)
 {
 	uint8_t i = 0;
 	str[0] = UART_ReceiveByte();
-	for(i=1;str[i-1]!='#';i++){
+	for(i=1;str[i-1]!=END_OF_STRING;i++){
 		str[i] = UART_ReceiveByte();
 	} 
 	str[i] = '\0';
