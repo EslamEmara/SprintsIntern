@@ -13,8 +13,9 @@
 #include "RegMap.h"
 #include "TypeDefs.h"
 
-#define END_OF_STRING	0x0D		/*enter*/
-#define MAX_STRING_SIZE	10
+#define END_OF_STRING		0x0D
+#define MAX_STRING_SIZE		15
+
 /*frequencies*/
 typedef enum{
 	FREQ_1MHz = 1000000,

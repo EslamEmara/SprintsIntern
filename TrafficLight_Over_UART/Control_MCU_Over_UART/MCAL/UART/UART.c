@@ -133,6 +133,7 @@ void UART_ReceiveString(sint8_t *str)
 			str[i] = '\0';
 			break;
 		}
+		
 	}
 }
 
