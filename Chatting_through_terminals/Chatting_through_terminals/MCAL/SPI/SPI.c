@@ -97,8 +97,9 @@ uint8_t SPI_Master_RecieveByte(uint8_t SlaveID)
 void SPI_Master_SendString(sint8_t *str,uint8_t SlaveID)
 {
 	uint8_t character=0;
+	
 	for (character=0; str[character]!='\0';character++){
-		SPI_Master_SendByte((uint8_t)str[character],SlaveID);
+		SPI_Master_SendByte(str[character],SlaveID);
 	}
 }
 /*
@@ -111,13 +112,11 @@ void SPI_Master_RecieveString(sint8_t *str,uint8_t SlaveID)
 {
 	uint8_t character = 0;
 	
-	uint8_t i = 0;
-	
-	for (i = 0 ;i<MAX_STRING_SIZE;i++){
-		str[i] = SPI_Master_RecieveByte();
+	for (character = 0 ;character<SPI_MAX_STRING_SIZE;character++){
+		str[character] = SPI_Master_RecieveByte(SlaveID);
 		
-		if(str[i]==END_OF_STRING){
-			str[i] = '\0';
+		if(str[character]==SPI_END_OF_STRING){
+			str[character] = '\0';
 			break;
 		}
 	}
@@ -156,10 +155,10 @@ void SPI_Slave_RecieveString(sint8_t *str)
 {
 	uint8_t i = 0;
 	
-	for (i = 0 ;i<MAX_STRING_SIZE;i++){
+	for (i = 0 ;i<SPI_MAX_STRING_SIZE;i++){
 		str[i] = SPI_Slave_ReceiveByte();
 		
-		if(str[i]==END_OF_STRING){
+		if(str[i]==SPI_END_OF_STRING){
 			str[i] = '\0';
 			break;
 		}

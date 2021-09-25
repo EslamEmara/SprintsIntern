@@ -16,7 +16,6 @@ int main(void)
 	SPI_Slave_Init();
 	Lcd_init();
 	
-	DIO_setPortDir(PORTC,OUT);
 	
     while (1) 
     {
