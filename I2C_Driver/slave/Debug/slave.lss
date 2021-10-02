@@ -1,0 +1,243 @@
+
+slave.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000124  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  00000178  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  00000178  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000001a8  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000090  00000000  00000000  000001e4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   000008ea  00000000  00000000  00000274  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000699  00000000  00000000  00000b5e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   00000642  00000000  00000000  000011f7  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000120  00000000  00000000  0000183c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    00000438  00000000  00000000  0000195c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    0000043b  00000000  00000000  00001d94  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000070  00000000  00000000  000021cf  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 36 00 	call	0x6c	; 0x6c <main>
+  64:	0c 94 90 00 	jmp	0x120	; 0x120 <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <main>:
+
+#include "MCAL/I2C/I2C.h"
+#include <avr/io.h>
+
+int main(void)
+{	DDRD = 0xFF;
+  6c:	8f ef       	ldi	r24, 0xFF	; 255
+  6e:	81 bb       	out	0x11, r24	; 17
+	uint8_t x;
+	I2C_Slave_Init(0x20);
+  70:	80 e2       	ldi	r24, 0x20	; 32
+  72:	0e 94 45 00 	call	0x8a	; 0x8a <I2C_Slave_Init>
+	sint8_t count = 0;
+    while (1) 
+    {
+		switch(I2C_Slave_Listen())	/* Check for SLA+W or SLA+R */
+  76:	0e 94 50 00 	call	0xa0	; 0xa0 <I2C_Slave_Listen>
+  7a:	81 11       	cpse	r24, r1
+  7c:	fc cf       	rjmp	.-8      	; 0x76 <main+0xa>
+		{
+			case 0:
+			{
+				do
+				{
+					count = I2C_Slave_Receive();/* Receive data byte*/
+  7e:	0e 94 6d 00 	call	0xda	; 0xda <I2C_Slave_Receive>
+					if(count != 255)
+  82:	8f 3f       	cpi	r24, 0xFF	; 255
+  84:	e1 f3       	breq	.-8      	; 0x7e <main+0x12>
+						PORTD = count;
+  86:	82 bb       	out	0x12, r24	; 18
+  88:	fa cf       	rjmp	.-12     	; 0x7e <main+0x12>
+
+0000008a <I2C_Slave_Init>:
+	return TWDR_REG;											
+}
+
+void I2C_Slave_Init(uint8_t slave_address)
+{
+	TWAR_REG=slave_address;		
+  8a:	82 b9       	out	0x02, r24	; 2
+	ENABLE_I2C;
+  8c:	86 b7       	in	r24, 0x36	; 54
+  8e:	84 60       	ori	r24, 0x04	; 4
+  90:	86 bf       	out	0x36, r24	; 54
+	GENERATE_ACK;
+  92:	86 b7       	in	r24, 0x36	; 54
+  94:	80 64       	ori	r24, 0x40	; 64
+  96:	86 bf       	out	0x36, r24	; 54
+	CLEAR_IF;
+  98:	86 b7       	in	r24, 0x36	; 54
+  9a:	80 68       	ori	r24, 0x80	; 128
+  9c:	86 bf       	out	0x36, r24	; 54
+  9e:	08 95       	ret
+
+000000a0 <I2C_Slave_Listen>:
+sint8_t I2C_Slave_Listen()
+{
+	uint8_t status;			
+	while(1)
+	{
+		while(!GETBIT(I2C_CONTROL_REG,I2C_IF));
+  a0:	06 b6       	in	r0, 0x36	; 54
+  a2:	07 fe       	sbrs	r0, 7
+  a4:	fd cf       	rjmp	.-6      	; 0xa0 <I2C_Slave_Listen>
+		status=TWSR_REG & HIGH_FIVE_BITS;		
+  a6:	81 b1       	in	r24, 0x01	; 1
+  a8:	88 7f       	andi	r24, 0xF8	; 248
+		if(status==0x60||status==0x68)	
+  aa:	80 36       	cpi	r24, 0x60	; 96
+  ac:	61 f0       	breq	.+24     	; 0xc6 <I2C_Slave_Listen+0x26>
+  ae:	88 36       	cpi	r24, 0x68	; 104
+  b0:	61 f0       	breq	.+24     	; 0xca <I2C_Slave_Listen+0x2a>
+			return 0;			
+		if(status==0xA8||status==0xB0)	
+  b2:	88 3a       	cpi	r24, 0xA8	; 168
+  b4:	61 f0       	breq	.+24     	; 0xce <I2C_Slave_Listen+0x2e>
+  b6:	80 3b       	cpi	r24, 0xB0	; 176
+  b8:	61 f0       	breq	.+24     	; 0xd2 <I2C_Slave_Listen+0x32>
+			return 1;			
+		if(status==0x70||status==0x78)	
+  ba:	80 37       	cpi	r24, 0x70	; 112
+  bc:	61 f0       	breq	.+24     	; 0xd6 <I2C_Slave_Listen+0x36>
+  be:	88 37       	cpi	r24, 0x78	; 120
+  c0:	79 f7       	brne	.-34     	; 0xa0 <I2C_Slave_Listen>
+			return 2;			
+  c2:	82 e0       	ldi	r24, 0x02	; 2
+  c4:	08 95       	ret
+	while(1)
+	{
+		while(!GETBIT(I2C_CONTROL_REG,I2C_IF));
+		status=TWSR_REG & HIGH_FIVE_BITS;		
+		if(status==0x60||status==0x68)	
+			return 0;			
+  c6:	80 e0       	ldi	r24, 0x00	; 0
+  c8:	08 95       	ret
+  ca:	80 e0       	ldi	r24, 0x00	; 0
+  cc:	08 95       	ret
+		if(status==0xA8||status==0xB0)	
+			return 1;			
+  ce:	81 e0       	ldi	r24, 0x01	; 1
+  d0:	08 95       	ret
+  d2:	81 e0       	ldi	r24, 0x01	; 1
+  d4:	08 95       	ret
+		if(status==0x70||status==0x78)	
+			return 2;			
+  d6:	82 e0       	ldi	r24, 0x02	; 2
+		else
+			continue;			
+	}
+}
+  d8:	08 95       	ret
+
+000000da <I2C_Slave_Receive>:
+char I2C_Slave_Receive()
+{
+	uint8_t status;		
+	ENABLE_I2C;
+  da:	86 b7       	in	r24, 0x36	; 54
+  dc:	84 60       	ori	r24, 0x04	; 4
+  de:	86 bf       	out	0x36, r24	; 54
+	GENERATE_ACK;
+  e0:	86 b7       	in	r24, 0x36	; 54
+  e2:	80 64       	ori	r24, 0x40	; 64
+  e4:	86 bf       	out	0x36, r24	; 54
+	CLEAR_IF;
+  e6:	86 b7       	in	r24, 0x36	; 54
+  e8:	80 68       	ori	r24, 0x80	; 128
+  ea:	86 bf       	out	0x36, r24	; 54
+	while(!GETBIT(I2C_CONTROL_REG,I2C_IF));
+  ec:	06 b6       	in	r0, 0x36	; 54
+  ee:	07 fe       	sbrs	r0, 7
+  f0:	fd cf       	rjmp	.-6      	; 0xec <I2C_Slave_Receive+0x12>
+	status=TWSR_REG & HIGH_FIVE_BITS;		
+  f2:	81 b1       	in	r24, 0x01	; 1
+  f4:	88 7f       	andi	r24, 0xF8	; 248
+	
+	if(status==0x80||status==0x90)
+  f6:	80 38       	cpi	r24, 0x80	; 128
+  f8:	11 f0       	breq	.+4      	; 0xfe <I2C_Slave_Receive+0x24>
+  fa:	80 39       	cpi	r24, 0x90	; 144
+  fc:	11 f4       	brne	.+4      	; 0x102 <I2C_Slave_Receive+0x28>
+		return TWDR_REG;		
+  fe:	83 b1       	in	r24, 0x03	; 3
+ 100:	08 95       	ret
+	if(status==0x88||status==0x98)
+ 102:	88 38       	cpi	r24, 0x88	; 136
+ 104:	11 f0       	breq	.+4      	; 0x10a <I2C_Slave_Receive+0x30>
+ 106:	88 39       	cpi	r24, 0x98	; 152
+ 108:	11 f4       	brne	.+4      	; 0x10e <I2C_Slave_Receive+0x34>
+		return TWDR_REG;		
+ 10a:	83 b1       	in	r24, 0x03	; 3
+ 10c:	08 95       	ret
+	if(status==0xA0){
+ 10e:	80 3a       	cpi	r24, 0xA0	; 160
+ 110:	29 f4       	brne	.+10     	; 0x11c <I2C_Slave_Receive+0x42>
+		CLEAR_IF;
+ 112:	86 b7       	in	r24, 0x36	; 54
+ 114:	80 68       	ori	r24, 0x80	; 128
+ 116:	86 bf       	out	0x36, r24	; 54
+		return -1;
+ 118:	8f ef       	ldi	r24, 0xFF	; 255
+ 11a:	08 95       	ret
+	}
+	else
+		return -2;			
+ 11c:	8e ef       	ldi	r24, 0xFE	; 254
+ 11e:	08 95       	ret
+
+00000120 <_exit>:
+ 120:	f8 94       	cli
+
+00000122 <__stop_program>:
+ 122:	ff cf       	rjmp	.-2      	; 0x122 <__stop_program>

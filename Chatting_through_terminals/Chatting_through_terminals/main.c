@@ -8,6 +8,7 @@
 #include "./MCAL/SPI/SPI.h"
 #include "MCAL/UART/UART.h"
 
+
 #define SLAVE_0		0
 
 int main(void)
